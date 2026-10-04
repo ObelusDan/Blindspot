@@ -76,3 +76,41 @@ test('new rules have deterministic ordering and do not mutate inputs', () => {
   assert.deepEqual(evaluate(files, diff), warnings);
   assert.deepEqual(evaluate([...files].reverse(), diff), warnings);
 });
+
+test('deleted root declaration uses old path and still respects companions', () => {
+  const deleted = 'diff --git a/index.d.ts b/index.d.ts\ndeleted file mode 100644\n--- a/index.d.ts\n+++ /dev/null\n@@ -1 +0,0 @@\n-export type Result = string;\n';
+  assert.equal(has(['index.d.ts'], deleted, typesId), true);
+  for (const companion of ['test/types.test.js', 'README.md', 'docs/types.md']) {
+    assert.equal(has(['index.d.ts', companion], deleted, typesId), false);
+  }
+  assert.equal(has(['other.d.ts'], deleted, typesId), false);
+  assert.equal(has(['index.d.ts'], deleted.replace('-export type Result = string;', '-// no exports'), typesId), false);
+});
+
+test('rename-away warns only with exported declaration evidence in the patch', () => {
+  const renamed = 'diff --git a/index.d.ts b/internal.d.ts\nsimilarity index 80%\nrename from index.d.ts\nrename to internal.d.ts\n--- a/index.d.ts\n+++ b/internal.d.ts\n@@ -1 +1 @@\n-export type Result = string;\n+export type Result = number;\n';
+  assert.equal(has(['internal.d.ts'], renamed, typesId), true);
+  assert.equal(has(['index.d.ts', 'internal.d.ts'], renamed, typesId), true);
+  assert.equal(has(['internal.d.ts', 'docs/types.md'], renamed, typesId), false);
+  const pureRename = 'diff --git a/index.d.ts b/internal.d.ts\nsimilarity index 100%\nrename from index.d.ts\nrename to internal.d.ts\n';
+  assert.equal(has(['index.d.ts', 'internal.d.ts'], pureRename, typesId), false);
+});
+
+test('whitespace and comment markers inside string and template literals remain meaningful', () => {
+  for (const [before, after] of [
+    ['"a b"', '"ab"'],
+    ["'a b'", "'ab'"],
+    ['`a b`', '`ab`'],
+    ['"a // b"', '"a // c"'],
+    ['"a \\" b"', '"a \\"b"'],
+    ['`a \\` b`', '`a \\`b`'],
+  ]) {
+    assert.equal(has(['index.d.ts'], patch('index.d.ts', `-export type Result = ${before};\n+export type Result = ${after};`), typesId), true);
+  }
+});
+
+test('formatting outside literals and trailing comments are still suppressed', () => {
+  for (const literal of ['"a b"', "'a b'", '`a b`', '"a // b"', '"a \\" b"']) {
+    assert.equal(has(['index.d.ts'], patch('index.d.ts', `-export type Result = ${literal}; // old\n+  export   type Result=${literal} ; // new`), typesId), false);
+  }
+});

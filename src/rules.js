@@ -4,6 +4,27 @@ function any(files, patterns) {
   return files.some((file) => patterns.some((pattern) => pattern.test(file)));
 }
 
+// Ignore formatting outside literals; preserve literal contents and escapes.
+function normalizeDeclaration(line) {
+  let normalized = "";
+  let quote = null;
+  let escaped = false;
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (quote) {
+      normalized += char;
+      if (escaped) escaped = false;
+      else if (char === "\\") escaped = true;
+      else if (char === quote) quote = null;
+    } else {
+      if (char === "/" && line[i + 1] === "/") break;
+      if (char === '"' || char === "'" || char === "`") quote = char;
+      if (!/\s/.test(char)) normalized += char;
+    }
+  }
+  return normalized.replace(/;$/, "");
+}
+
 function evaluate(files, diff) {
   const warnings = [];
 
@@ -110,9 +131,10 @@ function evaluate(files, diff) {
   const publicTypes = [];
   for (const patch of patches) {
     const path = /^\+\+\+ b\/(.+)$/m.exec(patch)?.[1];
-    if (!path || !files.includes(path)) continue;
+    const oldPath = /^--- a\/(.+)$/m.exec(patch)?.[1];
+    if (![path, oldPath].some((candidate) => candidate && files.includes(candidate))) continue;
     // Only root bin entry points with a shebang, not arbitrary scripts.
-    if (/^bin\/[^/]+$/.test(path) &&
+    if (path && /^bin\/[^/]+$/.test(path) &&
         /^new file mode 100755$/m.test(patch) &&
         /^--- \/dev\/null$/m.test(patch) &&
         /^\+#!/m.test(patch)) {
@@ -120,15 +142,15 @@ function evaluate(files, diff) {
     }
     // Root index.d.ts is an explicit package declaration entry point. Do not
     // infer public contracts from arbitrary interfaces, types, or source exports.
-    if (path === "index.d.ts") {
+    if (path === "index.d.ts" || oldPath === "index.d.ts") {
       const exported = (prefix) => patch.split("\n")
         .filter((line) => line.startsWith(prefix) &&
           /^export\s+(?:declare\s+)?(?:interface|type|class|function|const|let|enum)\b/.test(line.slice(1).trim()))
-        .map((line) => line.slice(1).replace(/\s+\/\/.*$/, "").replace(/\s+/g, "").replace(/;$/, ""))
+        .map((line) => normalizeDeclaration(line.slice(1)))
         .sort();
-      const added = exported("+");
-      const removed = exported("-");
-      if (JSON.stringify(added) !== JSON.stringify(removed)) publicTypes.push(path);
+      const added = path === "index.d.ts" ? exported("+") : [];
+      const removed = oldPath === "index.d.ts" ? exported("-") : [];
+      if (JSON.stringify(added) !== JSON.stringify(removed)) publicTypes.push("index.d.ts");
     }
   }
 
