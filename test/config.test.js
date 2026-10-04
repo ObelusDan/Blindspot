@@ -198,3 +198,76 @@ test('config comes from base tip even when merge base predates policy', t => {
   assert.equal(result.status, 0);
   assert.match(result.stdout, /No companion-change/);
 });
+
+for (const inverse of [false, true]) {
+  test(`exact patch evidence survives ${inverse ? 'directory-to-file' : 'file-to-directory'} transitions`, t => {
+    const {cwd, git, cli} = fixture(t);
+    writeFileSync(join(cwd, '.blindspot.yml'), 'ignore:\n  - "pkg/**"\n');
+    if (inverse) {
+      mkdirSync(join(cwd, 'pkg'));
+      writeFileSync(join(cwd, 'pkg/ignored.js'), 'process.env.IGNORED_KEY;\n');
+    } else writeFileSync(join(cwd, 'pkg'), 'old file\n');
+    git('add', '.'); git('commit', '-q', '-m', 'transition base'); git('branch', '-f', 'main', 'HEAD');
+    rmSync(join(cwd, 'pkg'), {recursive: true});
+    if (inverse) writeFileSync(join(cwd, 'pkg'), 'process.env.RETAINED_KEY;\n');
+    else {
+      mkdirSync(join(cwd, 'pkg'));
+      writeFileSync(join(cwd, 'pkg/ignored.js'), 'process.env.IGNORED_KEY;\n');
+    }
+    git('add', '.'); git('commit', '-q', '-m', 'transition feature');
+    const before = [git('status', '--porcelain=v1'), git('show-ref'), git('reflog', '--all')];
+    const config = baseConfig(cwd);
+    const result = comparison('main', cwd, config);
+    assert.deepEqual(result.files, ['pkg']);
+    assert.doesNotMatch(result.diff, /pkg\/ignored\.js|IGNORED_KEY/);
+    assert.deepEqual(evaluate(result.files, result.diff, config).map(w => w.id), inverse ? ['env-undocumented'] : []);
+    const checked = cli(cwd, {'INPUT_FAIL-ON-WARNING': 'true'});
+    assert.equal(checked.status, inverse ? 2 : 0);
+    assert.deepEqual([git('status', '--porcelain=v1'), git('show-ref'), git('reflog', '--all')], before);
+  });
+}
+
+test('exact filtering handles Git-quoted and unusual additions, deletions and ancestor transitions', t => {
+  const {cwd, git} = fixture(t);
+  const names = ['space name', 'name b/part', 'tab\tname', 'line\nname', 'quote"name', 'back\\slash', 'café', 'bell\x07', 'vertical\x0b', 'form\x0c', 'carriage\r', 'delete\x7f', 'literal[1]', ':(glob)*'];
+  const write = (name, text) => {
+    const path = join(cwd, name);
+    mkdirSync(require('node:path').dirname(path), {recursive: true});
+    writeFileSync(path, text);
+  };
+  write('.blindspot.yml', 'ignore:\n  - "**/ignored.js"\n');
+  for (const name of names) {
+    write(`blocked/${name}`, 'old ancestor\n');
+    write(`gone/${name}`, 'deleted retained file\n');
+  }
+  git('add', '.'); git('commit', '-q', '-m', 'unusual base'); git('branch', '-f', 'main', 'HEAD');
+  for (const name of names) {
+    rmSync(join(cwd, `blocked/${name}`));
+    write(`blocked/${name}/ignored.js`, 'process.env.IGNORED_KEY;\n');
+    rmSync(join(cwd, `gone/${name}`));
+    write(`keep/${name}`, 'process.env.RETAINED_KEY;\n');
+  }
+  git('add', '.'); git('commit', '-q', '-m', 'unusual feature');
+  git('config', 'core.quotePath', 'false'); // Filtering fixes the output spelling itself.
+  const result = comparison('main', cwd, baseConfig(cwd));
+  const expected = names.flatMap(name => [`blocked/${name}`, `gone/${name}`, `keep/${name}`]);
+  assert.deepEqual([...result.files].sort(), expected.sort());
+  assert.doesNotMatch(result.diff, /ignored\.js|IGNORED_KEY/);
+  assert.equal((result.diff.match(/^diff --git /gm) || []).length, names.length * 3);
+  assert.equal((result.diff.match(/\+process\.env\.RETAINED_KEY/g) || []).length, names.length);
+  assert.deepEqual(evaluate(result.files, result.diff, baseConfig(cwd)).map(w => w.id), ['env-undocumented']);
+});
+
+test('unassociated or ambiguous patch sections are excluded conservatively', () => {
+  const { filterPatches } = require('../src/git');
+  const kept = 'diff --git a/keep.js b/keep.js\n--- a/keep.js\n+++ b/keep.js\n+process.env.RETAINED;\n';
+  const rejected = [
+    'unassociated preamble\n+process.env.IGNORED;\n',
+    'diff --git a/keep.js b/ignored.js\n+process.env.IGNORED;\n',
+    'diff --git a/keep.js/ignored.js b/keep.js/ignored.js\n+process.env.IGNORED;\n',
+    'diff --git "a/keep.js" "b/keep.js"\n+process.env.IGNORED;\n',
+    'diff --git "a/bad\\q" "b/bad\\q"\n+process.env.IGNORED;\n',
+  ].join('');
+  assert.equal(filterPatches(rejected + kept, ['keep.js']), kept);
+  assert.equal(filterPatches(rejected + kept, []), '');
+});

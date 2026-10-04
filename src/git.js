@@ -50,6 +50,32 @@ function loadBaseConfig(baseCommit, cwd = process.cwd()) {
   }
 }
 
+// Match Git's core.quotePath=true spelling byte-for-byte, avoiding ambiguous
+// splitting of headers for paths containing spaces or " b/". Unrepresentable
+// filenames cannot match and are conservatively omitted from patch evidence.
+function quotedGitPath(path) {
+  const escapes = { 7: "a", 8: "b", 9: "t", 10: "n", 11: "v", 12: "f", 13: "r", 34: '"', 92: "\\" };
+  let text = "";
+  let quoted = false;
+  for (const byte of Buffer.from(path, "utf8")) {
+    if (escapes[byte]) { text += "\\" + escapes[byte]; quoted = true; }
+    else if (byte < 32 || byte >= 127) {
+      text += "\\" + byte.toString(8).padStart(3, "0"); quoted = true;
+    } else text += String.fromCharCode(byte);
+  }
+  return quoted ? '"' + text + '"' : text;
+}
+
+function filterPatches(diff, files) {
+  // Configured ignores disable rename detection: each addition/deletion has
+  // the same exact pathname on both sides of its diff --git header.
+  const headers = new Set(files.map(path =>
+    `diff --git ${quotedGitPath("a/" + path)} ${quotedGitPath("b/" + path)}`));
+  return diff.split(/^(?=diff --git )/m)
+    .filter(patch => headers.has(patch.split("\n", 1)[0]))
+    .join("");
+}
+
 function comparison(baseRef, cwd = process.cwd(), config = {}) {
   const base = resolveBase(baseRef, cwd);
   const head = git(["rev-parse", "--verify", "HEAD^{commit}"], cwd).trim();
@@ -64,8 +90,13 @@ function comparison(baseRef, cwd = process.cwd(), config = {}) {
   const names = git(["diff", "--no-ext-diff", "--no-textconv", "--name-only", "-z", ...renameOptions, mergeBase, head, "--"], cwd);
   const { matchesPath } = require("./config");
   const files = names.split("\0").filter(Boolean).filter(file => !ignored.some(pattern => matchesPath(file, pattern)));
-  const diff = ignored.length && !files.length ? "" : git([...(ignored.length ? ["--literal-pathspecs"] : []), "diff", "--no-ext-diff", "--no-textconv", ...renameOptions, "--no-color", "--src-prefix=a/", "--dst-prefix=b/", "--unified=0", mergeBase, head, "--", ...(ignored.length ? files : [])], cwd);
+  const rawDiff = ignored.length && !files.length ? "" : git([
+    ...(ignored.length ? ["-c", "core.quotePath=true"] : []),
+    "diff", "--no-ext-diff", "--no-textconv", ...renameOptions, "--no-color",
+    "--src-prefix=a/", "--dst-prefix=b/", "--unified=0", mergeBase, head, "--",
+  ], cwd);
+  const diff = ignored.length ? filterPatches(rawDiff, files) : rawDiff;
   return { files, diff };
 }
 
-module.exports = { comparison, resolveBase, repositoryRoot, loadBaseConfig };
+module.exports = { comparison, resolveBase, repositoryRoot, loadBaseConfig, filterPatches };
