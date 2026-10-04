@@ -102,6 +102,16 @@ jobs:
           base-ref: ${{ github.base_ref }}
 ```
 
+## GitHub Actions job summary
+
+When `GITHUB_STEP_SUMMARY` is set, Blindspot appends a Markdown summary with
+the changed-file count and either a clear success message or the warning count,
+stable rule IDs and human-readable messages in rule order. Console output is
+unchanged. Without that variable, local execution only prints console output.
+If the summary cannot be written, Blindspot reports a warning on stderr and
+preserves the evaluation exit code, including opt-in `fail-on-warning` behaviour.
+No GitHub API calls, PR comments or additional dependencies are used.
+
 ## Local use
 
 ```bash

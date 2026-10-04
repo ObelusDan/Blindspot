@@ -8,6 +8,7 @@ function arg(name, fallback) {
 
 const { evaluate } = require("./rules");
 const { comparison } = require("./git");
+const { writeSummary } = require("./summary");
 
 function render(warnings, files) {
   console.log("Blindspot");
@@ -36,6 +37,7 @@ function main() {
   const { files, diff } = comparison(base);
   const warnings = evaluate(files, diff);
   render(warnings, files);
+  writeSummary(warnings, files);
 
   if (fail && warnings.length) {
     process.exitCode = 2;
