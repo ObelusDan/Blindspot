@@ -1,8 +1,5 @@
 "use strict";
 
-const { readFileSync, lstatSync } = require("node:fs");
-const { join } = require("node:path");
-
 const RULE_IDS = Object.freeze([
   "env-undocumented", "manifest-without-lock", "api-without-tests",
   "schema-without-migration", "workflow-change", "scope-review",
@@ -52,6 +49,7 @@ function parseConfig(source) {
     } else {
       validatePattern(value, line);
     }
+    if (config[key].includes(value)) invalid(`duplicate value '${value}' in ${key}; remove the repeated entry`, line);
     config[key].push(value);
   }
   return config;
@@ -80,19 +78,4 @@ function matchesPath(path, pattern) {
   return new RegExp(regex + "$", "s").test(path);
 }
 
-function loadConfig(root) {
-  const path = join(root, ".blindspot.yml");
-  let stat;
-  try { stat = lstatSync(path); } catch (error) {
-    if (error.code === "ENOENT") return parseConfig("");
-    throw new Error(`Cannot read .blindspot.yml: ${error.message}`);
-  }
-  if (!stat.isFile()) invalid("config must be a regular file, not a directory or symbolic link");
-  if (stat.size > 64 * 1024) invalid("config exceeds the 64 KiB limit; keep it small");
-  try { return parseConfig(readFileSync(path, "utf8")); } catch (error) {
-    if (error.message.startsWith("Invalid .blindspot.yml")) throw error;
-    throw new Error(`Cannot read .blindspot.yml: ${error.message}`);
-  }
-}
-
-module.exports = { RULE_IDS, parseConfig, loadConfig, matchesPath };
+module.exports = { RULE_IDS, parseConfig, matchesPath };

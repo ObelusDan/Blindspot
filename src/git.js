@@ -33,6 +33,23 @@ function repositoryRoot(cwd = process.cwd()) {
   return git(["rev-parse", "--show-toplevel"], cwd).replace(/\n$/, "");
 }
 
+// Read the resolved base commit's root blob, never the PR checkout or merge base.
+function loadBaseConfig(baseCommit, cwd = process.cwd()) {
+  const { parseConfig } = require("./config");
+  const entry = git(["ls-tree", "-z", baseCommit, "--", ".blindspot.yml"], cwd);
+  if (!entry) return parseConfig("");
+  const match = /^(100644|100755) blob ([0-9a-f]+)\t\.blindspot\.yml\0$/.exec(entry);
+  if (!match) throw new Error("Invalid .blindspot.yml on base: config must be a regular file, not a directory or symbolic link.");
+  const object = match[2];
+  const size = Number(git(["cat-file", "-s", object], cwd).trim());
+  if (size > 64 * 1024) throw new Error("Invalid .blindspot.yml on base: config exceeds the 64 KiB limit; keep it small.");
+  try {
+    return parseConfig(git(["cat-file", "blob", object], cwd));
+  } catch (error) {
+    throw new Error(`Base config (${baseCommit}): ${error.message}`);
+  }
+}
+
 function comparison(baseRef, cwd = process.cwd(), config = {}) {
   const base = resolveBase(baseRef, cwd);
   const head = git(["rev-parse", "--verify", "HEAD^{commit}"], cwd).trim();
@@ -51,4 +68,4 @@ function comparison(baseRef, cwd = process.cwd(), config = {}) {
   return { files, diff };
 }
 
-module.exports = { comparison, resolveBase, repositoryRoot };
+module.exports = { comparison, resolveBase, repositoryRoot, loadBaseConfig };

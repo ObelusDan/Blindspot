@@ -135,13 +135,28 @@ other than `[]`, nested mappings, tags, anchors, aliases, includes and additiona
 keys are rejected. There are no commands, expressions, plugins, severity settings
 or remote configuration. Strings are data and are never executed.
 
-Blindspot reads the current checkout's root config, even when invoked from a
-subdirectory. Uncommitted config edits apply locally; the diff still compares
-committed HEAD against its merge base. Loading does not create or modify files.
-A missing or empty config preserves existing behaviour. Config must be a regular
-file (no symlink) of at most 64 KiB. Invalid config exits `1` with the file name,
-line number where applicable, and a corrective diagnostic. Warnings still exit
-`0` by default; the existing `fail-on-warning` opt-in remains unchanged.
+Blindspot reads `.blindspot.yml` from the root tree of the **resolved base ref's
+commit**, using read-only Git object commands. This is the base branch tip, not
+the merge-base commit used for the diff. Missing or empty base config preserves
+zero-config behaviour; invalid base config fails with exit `1` and a corrective
+diagnostic rather than falling back. Config must be a regular Git blob (no
+symlink or directory) of at most 64 KiB.
+
+The same behaviour applies in Actions and locally, including invocation from a
+subdirectory: `node src/index.js --base main` uses committed config on local
+`main` (or the existing remote-ref fallback). Config edits in the feature branch
+or working tree cannot suppress warnings in that branch's own check. After the
+config is merged into the base branch, later checks against that updated base
+use it, even if their merge base predates the config. To try config locally,
+commit it on a separate local base branch and compare against that ref. Blindspot
+never fetches, checks out files, or modifies refs/files; the chosen base ref must
+already be available locally. The diff still compares committed HEAD with its
+merge base. Warnings still exit `0` by default; `fail-on-warning` is unchanged.
+
+Duplicate values within any of the four lists are rejected with a config error
+that identifies the list, value and repeated entry's line. Equality uses the
+parsed string, so quoted and plain spellings of the same value are duplicates.
+Different patterns that happen to match the same paths are allowed.
 
 ## Install
 

@@ -4,8 +4,9 @@ const { mkdtempSync, rmSync, writeFileSync, mkdirSync, readFileSync, symlinkSync
 const { tmpdir } = require('node:os');
 const { join, resolve } = require('node:path');
 const { execFileSync, spawnSync } = require('node:child_process');
-const { parseConfig, loadConfig, matchesPath, RULE_IDS } = require('../src/config');
-const { comparison } = require('../src/git');
+const { parseConfig, matchesPath, RULE_IDS } = require('../src/config');
+const { comparison, resolveBase, loadBaseConfig } = require('../src/git');
+const baseConfig = cwd => loadBaseConfig(resolveBase('main', cwd), cwd);
 const { evaluate } = require('../src/rules');
 
 const empty = { disable: [], ignore: [], tests: [], migrations: [] };
@@ -69,27 +70,32 @@ function fixture(t) {
   return {cwd, git, cli};
 }
 
-test('CLI reads config from root even from a subdirectory; errors exit 1 without writes', t => {
+test('CLI reads committed base config from subdirectories; errors exit 1 without writes', t => {
   const {cwd, git, cli} = fixture(t);
   mkdirSync(join(cwd, 'nested'));
-  writeFileSync(join(cwd, 'package.json'), '{}'); git('add', '.'); git('commit', '-q', '-m', 'manifest');
-  assert.deepEqual(loadConfig(cwd), empty);
-  assert.equal(cli().status, 0); assert.match(cli().stdout, /manifest-without-lock/);
+  assert.deepEqual(baseConfig(cwd), empty);
   writeFileSync(join(cwd, '.blindspot.yml'), 'disable:\n  - manifest-without-lock\n');
+  git('add', '.'); git('commit', '-q', '-m', 'base config'); git('branch', '-f', 'main', 'HEAD');
+  writeFileSync(join(cwd, 'package.json'), '{}'); git('add', '.'); git('commit', '-q', '-m', 'manifest');
   const before = [git('status', '--porcelain=v1'), git('show-ref'), git('reflog', '--all'), readFileSync(join(cwd, '.blindspot.yml'), 'utf8')];
   const result = cli(join(cwd, 'nested'), {'INPUT_FAIL-ON-WARNING': 'true'});
   assert.equal(result.status, 0); assert.match(result.stdout, /No companion-change/);
   assert.deepEqual([git('status', '--porcelain=v1'), git('show-ref'), git('reflog', '--all'), readFileSync(join(cwd, '.blindspot.yml'), 'utf8')], before);
   writeFileSync(join(cwd, '.blindspot.yml'), 'disable:\n  - nonexistent');
-  assert.equal(cli().status, 1); assert.match(cli().stderr, /Invalid \.blindspot\.yml at line 2.*unknown rule ID/);
+  git('add', '.'); git('commit', '-q', '-m', 'invalid base config'); git('branch', '-f', 'main', 'HEAD');
+  assert.equal(cli().status, 1); assert.match(cli().stderr, /Base config.*Invalid \.blindspot\.yml at line 2.*unknown rule ID/);
   writeFileSync(join(cwd, '.blindspot.yml'), '#'.repeat(65537));
-  assert.throws(() => loadConfig(cwd), /64 KiB/);
+  git('add', '.'); git('commit', '-q', '-m', 'oversize base config'); git('branch', '-f', 'main', 'HEAD');
+  assert.throws(() => baseConfig(cwd), /64 KiB/);
   rmSync(join(cwd, '.blindspot.yml')); symlinkSync('package.json', join(cwd, '.blindspot.yml'));
-  assert.throws(() => loadConfig(cwd), /symbolic link/);
+  git('add', '.'); git('commit', '-q', '-m', 'symlink base config'); git('branch', '-f', 'main', 'HEAD');
+  assert.throws(() => baseConfig(cwd), /symbolic link/);
 });
 
 test('ignore removes both triggers and companion evidence, with literal unusual Git paths', t => {
   const {cwd, git, cli} = fixture(t);
+  writeFileSync(join(cwd, '.blindspot.yml'), 'ignore:\n  - "generated/**"');
+  git('add', '.'); git('commit', '-q', '-m', 'base ignores'); git('branch', '-f', 'main', 'HEAD');
   mkdirSync(join(cwd, 'generated')); mkdirSync(join(cwd, 'api'));
   writeFileSync(join(cwd, 'generated/env.js'), 'process.env.NEW_KEY;');
   writeFileSync(join(cwd, 'generated/README.md'), 'docs');
@@ -127,4 +133,68 @@ test('renames across ignored boundaries do not leak ignored content', t => {
   git('branch', '-f', 'main', 'HEAD~1');
   result = comparison('main', cwd, {ignore: ['generated/**']});
   assert.deepEqual(evaluate(result.files, result.diff).map(w => w.id), ['env-undocumented']);
+});
+
+for (const key of ['disable', 'ignore', 'tests', 'migrations']) {
+  test(`duplicate ${key} values are rejected after string decoding`, () => {
+    const value = key === 'disable' ? 'workflow-change' : 'spec/**';
+    assert.throws(() => parseConfig(`${key}:\n  - ${value}\n  - "${value}" # duplicate`),
+      error => error.message.includes('line 3') && error.message.includes(`duplicate value '${value}' in ${key}`) && error.message.includes('remove the repeated entry'));
+    assert.throws(() => parseConfig(`${key}:\n  - '${value}'\n  - '${value}'`), /duplicate value/);
+  });
+}
+
+for (const [key, value] of [['disable', 'manifest-without-lock'], ['ignore', 'package.json']]) {
+  test(`same-PR ${key} config cannot suppress its own warning; later PRs use merged config`, t => {
+    const {cwd, git, cli} = fixture(t);
+    const configPath = join(cwd, '.blindspot.yml');
+    writeFileSync(configPath, `${key}:\n  - ${value}\n`);
+    writeFileSync(join(cwd, 'package.json'), '{}');
+    git('add', '.'); git('commit', '-q', '-m', 'attempt config bypass');
+    const before = [git('status', '--porcelain=v1'), git('show-ref'), git('reflog', '--all'), readFileSync(configPath, 'utf8')];
+    const result = cli(cwd, {'INPUT_FAIL-ON-WARNING': 'true'});
+    assert.equal(result.status, 2);
+    assert.match(result.stdout, /manifest-without-lock/);
+    assert.deepEqual(baseConfig(cwd), empty);
+    assert.deepEqual([git('status', '--porcelain=v1'), git('show-ref'), git('reflog', '--all'), readFileSync(configPath, 'utf8')], before);
+    git('branch', '-f', 'main', 'HEAD'); // Simulate the config PR being merged.
+    writeFileSync(join(cwd, 'package.json'), '{"private":true}');
+    git('add', '.'); git('commit', '-q', '-m', 'later manifest change');
+    // Removing committed HEAD config and editing it locally must not undo base policy.
+    git('rm', '-q', '.blindspot.yml'); git('commit', '-q', '-m', 'remove feature config');
+    writeFileSync(configPath, 'disable:\n  - nonexistent');
+    const later = cli(cwd, {'INPUT_FAIL-ON-WARNING': 'true'});
+    assert.equal(later.status, 0);
+    assert.match(later.stdout, /No companion-change/);
+    assert.deepEqual(baseConfig(cwd)[key], [value]);
+  });
+}
+
+test('invalid base config cannot be bypassed by repairing HEAD or the working tree', t => {
+  const {cwd, git, cli} = fixture(t);
+  writeFileSync(join(cwd, '.blindspot.yml'), 'disable:\n  - missing-rule');
+  git('add', '.'); git('commit', '-q', '-m', 'invalid policy'); git('branch', '-f', 'main', 'HEAD');
+  writeFileSync(join(cwd, '.blindspot.yml'), 'disable: []');
+  git('add', '.'); git('commit', '-q', '-m', 'repair in feature');
+  for (const content of ['', 'disable:\n  - manifest-without-lock']) {
+    writeFileSync(join(cwd, '.blindspot.yml'), content);
+    const before = [git('status', '--porcelain=v1'), git('show-ref'), git('reflog', '--all')];
+    const result = cli();
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /Base config.*unknown rule ID 'missing-rule'/);
+    assert.deepEqual([git('status', '--porcelain=v1'), git('show-ref'), git('reflog', '--all')], before);
+  }
+});
+
+test('config comes from base tip even when merge base predates policy', t => {
+  const {cwd, git, cli} = fixture(t);
+  writeFileSync(join(cwd, 'package.json'), '{}'); git('add', '.'); git('commit', '-q', '-m', 'feature manifest');
+  git('switch', '-q', 'main');
+  writeFileSync(join(cwd, '.blindspot.yml'), 'disable:\n  - manifest-without-lock');
+  git('add', '.'); git('commit', '-q', '-m', 'base policy');
+  git('switch', '-q', 'feature');
+  assert.notEqual(git('merge-base', 'main', 'HEAD'), git('rev-parse', 'main'));
+  const result = cli(cwd, {'INPUT_FAIL-ON-WARNING': 'true'});
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /No companion-change/);
 });
