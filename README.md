@@ -61,6 +61,18 @@ jobs:
 node src/index.js --base main
 ```
 
+Base selection uses the Action `base-ref` input, then local `--base`, then
+`GITHUB_BASE_REF`, and finally `main`. Local branches, `origin/<branch>`, full
+refs, and commit IDs are supported. Only locally available history is read;
+Blindspot never fetches, checks out files, or updates refs. If the base is missing,
+fetch it yourself before checking. In Actions, use `fetch-depth: 0` as above so
+the base and merge-base history are available.
+
+An empty diff succeeds with zero warnings. Exit codes are `0` for a successful
+check, `1` for an error (with a diagnostic), and `2` for warnings when
+`fail-on-warning` is enabled. The check compares committed HEAD against its
+merge base; uncommitted changes are not included.
+
 ## Design rules
 
 1. One job: catch likely missing companion changes.

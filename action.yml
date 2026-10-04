@@ -6,7 +6,7 @@ inputs:
   base-ref:
     description: "Base branch/ref to compare against"
     required: false
-    default: "main"
+    default: ""
   fail-on-warning:
     description: "Exit non-zero when warnings are found"
     required: false
