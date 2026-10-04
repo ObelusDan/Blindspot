@@ -31,3 +31,27 @@ test("warns on schema without migration", () => {
     warnings.some((warning) => warning.id === "schema-without-migration")
   );
 });
+
+test('empty diff has no warnings', () => {
+  assert.deepEqual(evaluate([], ''), []);
+});
+
+test('all warnings have stable ordering and readable messages without mutating inputs', () => {
+  const files = Object.freeze(['src/api/users.js', 'package.json', 'prisma/schema.prisma', '.github/workflows/ci.yml', ...Array.from({ length: 25 }, (_, i) => `area${i % 4}/file${i}.js`)]);
+  const diff = '+const key = process.env.NEW_KEY;';
+  const warnings = evaluate(files, diff);
+  assert.deepEqual(warnings.map(w => w.id), ['env-undocumented', 'manifest-without-lock', 'api-without-tests', 'schema-without-migration', 'workflow-change', 'scope-review']);
+  assert.ok(warnings.every(w => w.message.length > 20));
+  warnings[0].message = 'modified';
+  assert.notDeepEqual(evaluate(files, diff), warnings);
+});
+
+test('companions suppress existing rules and removed env usage does not warn', () => {
+  assert.deepEqual(evaluate(['src/config.js', '.env.example', 'package.json', 'package-lock.json', 'prisma/schema.prisma', 'migrations/001.sql', 'src/api/users.js', 'test/users.test.js'], '+const key = process.env.NEW_KEY;'), []);
+  assert.deepEqual(evaluate(['src/config.js'], '-const key = process.env.OLD_KEY;'), []);
+  assert.deepEqual(evaluate(['a/x.js', 'b/y.js', 'c/z.js', 'd/w.js'], ''), []);
+});
+
+ test('diff file headers containing env syntax do not create warnings', () => {
+  assert.deepEqual(evaluate(['process.env.KEY.js'], '+++ b/process.env.KEY.js\n'), []);
+});
