@@ -1,0 +1,15 @@
+{
+  "name": "blindspot",
+  "version": "0.1.0",
+  "description": "Catch what your pull request missed.",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test",
+    "check": "node src/index.js --base main"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}
