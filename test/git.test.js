@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { mkdtempSync, rmSync, writeFileSync } = require('node:fs');
+const { mkdtempSync, rmSync, writeFileSync, mkdirSync, chmodSync } = require('node:fs');
 const { tmpdir } = require('node:os');
 const { join, resolve } = require('node:path');
 const { execFileSync, spawnSync } = require('node:child_process');
@@ -62,4 +62,26 @@ test('CLI uses Actions base and hyphenated action inputs; failures exit 1', t =>
   const failure = cli({ 'INPUT_BASE-REF': 'missing' });
   assert.equal(failure.status, 1);
   assert.match(failure.stderr, /Blindspot failed:.*not available locally/);
+});
+
+
+test('new companion rules consume real Git patches and preserve repository state', t => {
+  const { evaluate } = require('../src/rules');
+  const { cwd, git } = fixture(t);
+  git('switch', '-q', '-c', 'feature');
+  mkdirSync(join(cwd, 'bin'));
+  writeFileSync(join(cwd, 'bin/tool'), '#!/usr/bin/env node\nconsole.log("tool");\n');
+  chmodSync(join(cwd, 'bin/tool'), 0o755);
+  writeFileSync(join(cwd, 'index.d.ts'), 'export declare function run(): string;\n');
+  git('add', '.'); git('commit', '-q', '-m', 'public entry points');
+  const before = [git('status', '--porcelain=v1'), git('show-ref'), git('reflog', '--all')];
+  const result = comparison('main', cwd);
+  assert.deepEqual(evaluate(result.files, result.diff).map(w => w.id), [
+    'cli-command-without-docs', 'public-types-without-tests-or-docs',
+  ]);
+  assert.deepEqual([git('status', '--porcelain=v1'), git('show-ref'), git('reflog', '--all')], before);
+  writeFileSync(join(cwd, 'README.md'), 'CLI and public API documentation\n');
+  git('add', '.'); git('commit', '-q', '-m', 'document entry points');
+  const documented = comparison('main', cwd);
+  assert.deepEqual(evaluate(documented.files, documented.diff), []);
 });

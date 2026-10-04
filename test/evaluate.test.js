@@ -55,3 +55,17 @@ test('companions suppress existing rules and removed env usage does not warn', (
  test('diff file headers containing env syntax do not create warnings', () => {
   assert.deepEqual(evaluate(['process.env.KEY.js'], '+++ b/process.env.KEY.js\n'), []);
 });
+
+
+test('existing rule IDs retain focused companion suppression and path boundaries', () => {
+  for (const [files, diff, id] of [
+    [['src/config.js', 'docs/env.md'], '+const key = process.env.KEY;', 'env-undocumented'],
+    [['package.json', 'yarn.lock'], '', 'manifest-without-lock'],
+    [['prisma/schema.prisma', 'migrations/001.sql'], '', 'schema-without-migration'],
+    [['.github/workflow-notes.md'], '', 'workflow-change'],
+    [Array.from({length: 25}, (_, i) => `src/file${i}.js`), '', 'scope-review'],
+  ]) assert.equal(evaluate(files, diff).some(w => w.id === id), false);
+  assert.deepEqual(evaluate(['.github/workflows/ci.yml'], '').map(w => w.id), ['workflow-change']);
+  const broad = Array.from({length: 25}, (_, i) => `area${i % 4}/file${i}.js`);
+  assert.deepEqual(evaluate(broad, '').map(w => w.id), ['scope-review']);
+});

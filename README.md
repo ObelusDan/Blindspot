@@ -28,8 +28,55 @@ Blindspot catches those patterns before merge.
 - Database schema changed without a migration changing
 - GitHub Actions workflow changed
 - Very broad PRs are flagged for scope review
+- New executable root `bin/` entry points with a shebang without README/docs changes (`cli-command-without-docs`)
+- Exported declarations in root `index.d.ts` changed without tests or README/docs changes (`public-types-without-tests-or-docs`)
 
 Warnings are conservative and do **not** block merges by default.
+
+## Companion-rule boundaries
+
+The new CLI rule requires a Git new-file patch, executable mode `100755`, a
+shebang, and a direct child of root `bin/`. Existing command edits, arbitrary
+`scripts/`, nested helpers and non-executable files are skipped. Its warning
+names the matching paths. Any README or `doc/` / `docs/` change suppresses it.
+
+The public-types rule checks added/removed lines starting with exported
+interface, type, class, function, const, let or enum declarations in root
+`index.d.ts`. It ignores comments, context, whitespace-only changes and arbitrary
+source exports. Any recognised test or README/docs change suppresses it.
+This deliberately misses multiline body-only edits, re-exports, nested package
+entry points and other languages. Both rules require file-local diff evidence;
+quoted/ambiguous paths are skipped. Existing rule IDs and ordering are preserved;
+new warnings follow the original six rules.
+
+Candidate rules left out after false-positive review:
+
+- Docker/container changes: many changes need no CI/deploy edits, and a diff
+  cannot establish which deployment configuration exists or is related.
+- Migration without schema/model: data migrations and handwritten SQL often
+  have no model counterpart.
+- General public interfaces/types: internal types and generated declarations
+  cannot reliably be distinguished by broad path matching. Only the narrow
+  root declaration entry point above is included.
+- Security/auth without tests: folder names include configuration, helpers and
+  non-behavioural changes; they do not reliably identify security semantics.
+- Runtime dependency additions/removals: the existing `manifest-without-lock`
+  rule already covers this. Another warning would duplicate it; distinguishing
+  dependency blocks across manifest formats would add parsing complexity.
+- Example/sample configuration: examples can document existing usage; a source
+  edit is not necessarily required.
+- Version/release metadata: release notes may be generated or maintained outside
+  the repository. A version-only change does not establish a missing changelog.
+- New routes without API docs: path matching cannot reliably establish that an
+  endpoint was added or that externally maintained API docs need updating.
+- General CLI command/script additions: maintenance scripts and internal command
+  modules need not be documented; only executable root `bin/` additions qualify.
+
+These checks inspect changed paths and supplied diff text only. Companion
+changes are recognised repository-wide, so unrelated docs/tests can suppress a
+warning. Generated root declarations or internal executable bin scripts can
+still trigger a warning; the tool cannot prove intent. No parsing dependencies,
+network calls, configuration system or repository writes are introduced.
 
 ## Install
 
