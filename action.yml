@@ -1,0 +1,21 @@
+name: "Blindspot"
+description: "Catch likely companion changes your pull request missed."
+author: "ObelusDan"
+
+inputs:
+  base-ref:
+    description: "Base branch/ref to compare against"
+    required: false
+    default: "main"
+  fail-on-warning:
+    description: "Exit non-zero when warnings are found"
+    required: false
+    default: "false"
+
+runs:
+  using: "node20"
+  main: "src/index.js"
+
+branding:
+  icon: "eye-off"
+  color: "yellow"
