@@ -76,7 +76,72 @@ These checks inspect changed paths and supplied diff text only. Companion
 changes are recognised repository-wide, so unrelated docs/tests can suppress a
 warning. Generated root declarations or internal executable bin scripts can
 still trigger a warning; the tool cannot prove intent. No parsing dependencies,
-network calls, configuration system or repository writes are introduced.
+network calls or repository writes are introduced.
+
+## Optional false-positive controls
+
+Zero-config usage remains the default. To suppress known irrelevant warnings,
+add `.blindspot.yml` at the root of the repository being checked:
+
+```yaml
+disable:
+  - workflow-change
+  - scope-review
+ignore:
+  - "vendor/**"
+  - "generated/**"
+tests:
+  - "spec/**"
+  - "integration/**"
+migrations:
+  - "db/migrations/**"
+```
+
+Only these four keys are supported; every key is optional. `disable` accepts
+stable rule IDs:
+
+- `env-undocumented`
+- `manifest-without-lock`
+- `api-without-tests`
+- `schema-without-migration`
+- `workflow-change`
+- `scope-review`
+- `cli-command-without-docs`
+- `public-types-without-tests-or-docs`
+
+`ignore` removes matching changed files from all checks, including diff evidence,
+companion detection, scope counts, and the console/summary changed-file count.
+An ignored test or README therefore cannot suppress a warning for another file.
+When ignores are configured, renames are evaluated as deletion/addition pairs,
+so each side respects its own path's ignore setting.
+
+`tests` and `migrations` add companion patterns to the built-in defaults; they do
+not replace them. Test patterns also apply to `public-types-without-tests-or-docs`.
+Only changed files count as companions, not files merely present in the repository.
+
+Patterns match the full repository-relative path, case-sensitively, using `/`:
+`*` matches within one path segment, `?` matches one non-slash character, and
+`**` matches across directories. `**/` also matches zero directories.
+A trailing slash means all descendants (`spec/` is equivalent to `spec/**`);
+a bare directory name matches only that exact path. Absolute paths, `.`/`..`
+segments, backslashes, negation, braces and character classes are unsupported.
+Quote patterns, especially those beginning with `*`.
+
+The dependency-free parser intentionally supports a small YAML subset: top-level
+keys with indented `- string` lists, or `[]` for an empty list. Blank lines and
+`#` comments are supported. Strings may be plain, single-quoted (double an
+apostrophe to escape it), or double-quoted with JSON string escapes. Flow lists
+other than `[]`, nested mappings, tags, anchors, aliases, includes and additional
+keys are rejected. There are no commands, expressions, plugins, severity settings
+or remote configuration. Strings are data and are never executed.
+
+Blindspot reads the current checkout's root config, even when invoked from a
+subdirectory. Uncommitted config edits apply locally; the diff still compares
+committed HEAD against its merge base. Loading does not create or modify files.
+A missing or empty config preserves existing behaviour. Config must be a regular
+file (no symlink) of at most 64 KiB. Invalid config exits `1` with the file name,
+line number where applicable, and a corrective diagnostic. Warnings still exit
+`0` by default; the existing `fail-on-warning` opt-in remains unchanged.
 
 ## Install
 

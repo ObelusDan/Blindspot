@@ -7,7 +7,8 @@ function arg(name, fallback) {
 }
 
 const { evaluate } = require("./rules");
-const { comparison } = require("./git");
+const { loadConfig } = require("./config");
+const { comparison, repositoryRoot } = require("./git");
 const { writeSummary } = require("./summary");
 
 function render(warnings, files) {
@@ -34,8 +35,10 @@ function main() {
   const fail =
     String(process.env["INPUT_FAIL-ON-WARNING"] || process.env.INPUT_FAIL_ON_WARNING || "false").toLowerCase() === "true";
 
-  const { files, diff } = comparison(base);
-  const warnings = evaluate(files, diff);
+  const root = repositoryRoot();
+  const config = loadConfig(root);
+  const { files, diff } = comparison(base, root, config);
+  const warnings = evaluate(files, diff, config);
   render(warnings, files);
   writeSummary(warnings, files);
 

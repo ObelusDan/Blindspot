@@ -29,7 +29,11 @@ function resolveBase(baseRef, cwd) {
   throw new Error(`Base ref "${baseRef}" is not available locally. Fetch the base branch before running Blindspot, or use actions/checkout with fetch-depth: 0. Blindspot does not fetch or modify the repository.`);
 }
 
-function comparison(baseRef, cwd = process.cwd()) {
+function repositoryRoot(cwd = process.cwd()) {
+  return git(["rev-parse", "--show-toplevel"], cwd).replace(/\n$/, "");
+}
+
+function comparison(baseRef, cwd = process.cwd(), config = {}) {
   const base = resolveBase(baseRef, cwd);
   const head = git(["rev-parse", "--verify", "HEAD^{commit}"], cwd).trim();
   let mergeBase;
@@ -38,9 +42,13 @@ function comparison(baseRef, cwd = process.cwd()) {
   } catch (error) {
     throw new Error(`${error.message}. Ensure the base and HEAD share history; for shallow checkouts use actions/checkout with fetch-depth: 0.`);
   }
-  const names = git(["diff", "--no-ext-diff", "--no-textconv", "--name-only", "-z", mergeBase, head, "--"], cwd);
-  const diff = git(["diff", "--no-ext-diff", "--no-textconv", "--no-color", "--src-prefix=a/", "--dst-prefix=b/", "--unified=0", mergeBase, head, "--"], cwd);
-  return { files: names.split("\0").filter(Boolean), diff };
+  const ignored = config.ignore || [];
+  const renameOptions = ignored.length ? ["--no-renames"] : [];
+  const names = git(["diff", "--no-ext-diff", "--no-textconv", "--name-only", "-z", ...renameOptions, mergeBase, head, "--"], cwd);
+  const { matchesPath } = require("./config");
+  const files = names.split("\0").filter(Boolean).filter(file => !ignored.some(pattern => matchesPath(file, pattern)));
+  const diff = ignored.length && !files.length ? "" : git([...(ignored.length ? ["--literal-pathspecs"] : []), "diff", "--no-ext-diff", "--no-textconv", ...renameOptions, "--no-color", "--src-prefix=a/", "--dst-prefix=b/", "--unified=0", mergeBase, head, "--", ...(ignored.length ? files : [])], cwd);
+  return { files, diff };
 }
 
-module.exports = { comparison, resolveBase };
+module.exports = { comparison, resolveBase, repositoryRoot };
