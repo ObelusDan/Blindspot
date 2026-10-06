@@ -25,7 +25,8 @@ function normalizeDeclaration(line) {
   return normalized.replace(/;$/, "");
 }
 
-function evaluate(files, diff) {
+function evaluate(files, diff, config = {}) {
+  const { matchesPath } = require("./config");
   const warnings = [];
 
   const envUsageAdded =
@@ -70,7 +71,7 @@ function evaluate(files, diff) {
     /(^|\/)(api|apis|routes?|controllers?|handlers?|endpoints?)(\/|\.|$)/i,
   ]);
 
-  const testsChanged = any(files, [
+  const testsChanged = files.some(file => (config.tests || []).some(pattern => matchesPath(file, pattern))) || any(files, [
     /(^|\/)(test|tests|__tests__)(\/|\.|$)/i,
     /\.(test|spec)\.[cm]?[jt]sx?$/i,
     /test_.*\.py$/i,
@@ -89,7 +90,7 @@ function evaluate(files, diff) {
     /schema\.(prisma|sql)$/i,
   ]);
 
-  const migrationChanged = any(files, [
+  const migrationChanged = files.some(file => (config.migrations || []).some(pattern => matchesPath(file, pattern))) || any(files, [
     /(^|\/)(migrations?|alembic|db\/migrate)(\/|\.|$)/i,
   ]);
 
@@ -167,7 +168,7 @@ function evaluate(files, diff) {
     });
   }
 
-  return warnings;
+  return warnings.filter(warning => !(config.disable || []).includes(warning.id));
 }
 
 module.exports = { evaluate };

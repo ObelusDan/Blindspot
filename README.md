@@ -76,7 +76,87 @@ These checks inspect changed paths and supplied diff text only. Companion
 changes are recognised repository-wide, so unrelated docs/tests can suppress a
 warning. Generated root declarations or internal executable bin scripts can
 still trigger a warning; the tool cannot prove intent. No parsing dependencies,
-network calls, configuration system or repository writes are introduced.
+network calls or repository writes are introduced.
+
+## Optional false-positive controls
+
+Zero-config usage remains the default. To suppress known irrelevant warnings,
+add `.blindspot.yml` at the root of the repository being checked:
+
+```yaml
+disable:
+  - workflow-change
+  - scope-review
+ignore:
+  - "vendor/**"
+  - "generated/**"
+tests:
+  - "spec/**"
+  - "integration/**"
+migrations:
+  - "db/migrations/**"
+```
+
+Only these four keys are supported; every key is optional. `disable` accepts
+stable rule IDs:
+
+- `env-undocumented`
+- `manifest-without-lock`
+- `api-without-tests`
+- `schema-without-migration`
+- `workflow-change`
+- `scope-review`
+- `cli-command-without-docs`
+- `public-types-without-tests-or-docs`
+
+`ignore` removes matching changed files from all checks, including diff evidence,
+companion detection, scope counts, and the console/summary changed-file count.
+An ignored test or README therefore cannot suppress a warning for another file.
+When ignores are configured, renames are evaluated as deletion/addition pairs,
+so each side respects its own path's ignore setting.
+
+`tests` and `migrations` add companion patterns to the built-in defaults; they do
+not replace them. Test patterns also apply to `public-types-without-tests-or-docs`.
+Only changed files count as companions, not files merely present in the repository.
+
+Patterns match the full repository-relative path, case-sensitively, using `/`:
+`*` matches within one path segment, `?` matches one non-slash character, and
+`**` matches across directories. `**/` also matches zero directories.
+A trailing slash means all descendants (`spec/` is equivalent to `spec/**`);
+a bare directory name matches only that exact path. Absolute paths, `.`/`..`
+segments, backslashes, negation, braces and character classes are unsupported.
+Quote patterns, especially those beginning with `*`.
+
+The dependency-free parser intentionally supports a small YAML subset: top-level
+keys with indented `- string` lists, or `[]` for an empty list. Blank lines and
+`#` comments are supported. Strings may be plain, single-quoted (double an
+apostrophe to escape it), or double-quoted with JSON string escapes. Flow lists
+other than `[]`, nested mappings, tags, anchors, aliases, includes and additional
+keys are rejected. There are no commands, expressions, plugins, severity settings
+or remote configuration. Strings are data and are never executed.
+
+Blindspot reads `.blindspot.yml` from the root tree of the **resolved base ref's
+commit**, using read-only Git object commands. This is the base branch tip, not
+the merge-base commit used for the diff. Missing or empty base config preserves
+zero-config behaviour; invalid base config fails with exit `1` and a corrective
+diagnostic rather than falling back. Config must be a regular Git blob (no
+symlink or directory) of at most 64 KiB.
+
+The same behaviour applies in Actions and locally, including invocation from a
+subdirectory: `node src/index.js --base main` uses committed config on local
+`main` (or the existing remote-ref fallback). Config edits in the feature branch
+or working tree cannot suppress warnings in that branch's own check. After the
+config is merged into the base branch, later checks against that updated base
+use it, even if their merge base predates the config. To try config locally,
+commit it on a separate local base branch and compare against that ref. Blindspot
+never fetches, checks out files, or modifies refs/files; the chosen base ref must
+already be available locally. The diff still compares committed HEAD with its
+merge base. Warnings still exit `0` by default; `fail-on-warning` is unchanged.
+
+Duplicate values within any of the four lists are rejected with a config error
+that identifies the list, value and repeated entry's line. Equality uses the
+parsed string, so quoted and plain spellings of the same value are duplicates.
+Different patterns that happen to match the same paths are allowed.
 
 ## Install
 
