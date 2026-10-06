@@ -29,8 +29,24 @@ function evaluate(files, diff, config = {}) {
   const { matchesPath } = require("./config");
   const warnings = [];
 
-  const envUsageAdded =
-    /^\+(?!\+\+).*(?:process\.env\.|import\.meta\.env\.|os\.environ|ENV\[|getenv\()/m.test(diff);
+  // Compare literal keys within each file: moving an existing read is not a
+  // new configuration requirement. Test fixtures and Actions' own environment
+  // channels are not application configuration.
+  const envKeys = (lines, prefix) => new Set(lines
+    .filter(line => line.startsWith(prefix) && !line.startsWith(prefix.repeat(3)))
+    .flatMap(line => [...line.matchAll(/(?:process\.env\.|import\.meta\.env\.)([A-Za-z_][A-Za-z0-9_]*)|(?:os\.environ(?:\.get)?\s*[[(]|ENV\[|getenv\()\s*["']([^"']+)["']/g)]
+      .map(match => match[1] || match[2])));
+  const envSections = diff.includes("diff --git ")
+    ? diff.split(/^diff --git /m).filter(Boolean) : [diff];
+  const envUsageAdded = envSections.some(section => {
+    const path = /^\+\+\+ b\/(.+)$/m.exec(section)?.[1];
+    if (path && (/^\.github\/workflows\//.test(path) ||
+        /(^|\/)(test|tests|__tests__)(\/|\.|$)/i.test(path) ||
+        /\.(test|spec)\.[cm]?[jt]sx?$/i.test(path) || /(^|\/)test_.*\.py$/i.test(path))) return false;
+    const lines = section.split("\n");
+    const removed = envKeys(lines, "-");
+    return [...envKeys(lines, "+")].some(key => !removed.has(key));
+  });
 
   const envDocsChanged = any(files, [
     /(^|\/)\.env(?:\.example|\.sample|\.template)?$/,
@@ -46,7 +62,13 @@ function evaluate(files, diff, config = {}) {
     });
   }
 
-  const manifestChanged = any(files, [
+  // A version-only package release cannot invalidate dependency resolution.
+  const versionOnlyPackages = new Set(diff.split(/^diff --git /m).slice(1)
+    .filter(section => {
+      const lines = section.split("\n").filter(line => /^[+-]/.test(line) && !/^[+-]{3}/.test(line));
+      return lines.length > 0 && lines.every(line => /^[+-]\s*"version"\s*:\s*"[^"\n]+"\s*,?\s*$/.test(line));
+    }).map(section => /^\+\+\+ b\/(.+)$/m.exec(section)?.[1]).filter(Boolean));
+  const manifestChanged = any(files.filter(file => !versionOnlyPackages.has(file)), [
     /(^|\/)package\.json$/,
     /(^|\/)pyproject\.toml$/,
     /(^|\/)requirements[^/]*\.txt$/,
@@ -67,7 +89,7 @@ function evaluate(files, diff, config = {}) {
     });
   }
 
-  const apiChanged = any(files, [
+  const apiChanged = any(files.filter(file => /\.(?:[cm]?[jt]sx?|py|rb|go|rs|java|php|cs)$/i.test(file)), [
     /(^|\/)(api|apis|routes?|controllers?|handlers?|endpoints?)(\/|\.|$)/i,
   ]);
 
@@ -85,7 +107,7 @@ function evaluate(files, diff, config = {}) {
     });
   }
 
-  const schemaChanged = any(files, [
+  const schemaChanged = any(files.filter(file => !/(^|\/)(test|tests|__tests__)(\/|\.|$)/i.test(file)), [
     /(^|\/)(schema|schemas)(\/|\.|$)/i,
     /schema\.(prisma|sql)$/i,
   ]);

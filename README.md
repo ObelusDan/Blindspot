@@ -22,10 +22,10 @@ Blindspot catches those patterns before merge.
 
 ## V1 rules
 
-- Environment-variable usage changed without env example/docs changes
-- Dependency manifest changed without a recognised lockfile change
-- API/route/controller code changed without tests changing
-- Database schema changed without a migration changing
+- New literal environment-variable keys in application patches without env example/docs changes
+- Dependency manifest changed without a recognised lockfile change (version-only package changes are skipped)
+- API/route/controller source files changed without tests changing
+- Database schema outside recognised test paths changed without a migration changing
 - GitHub Actions workflow changed
 - Very broad PRs are flagged for scope review
 - New executable root `bin/` entry points with a shebang without README/docs changes (`cli-command-without-docs`)
@@ -77,6 +77,17 @@ changes are recognised repository-wide, so unrelated docs/tests can suppress a
 warning. Generated root declarations or internal executable bin scripts can
 still trigger a warning; the tool cannot prove intent. No parsing dependencies,
 network calls or repository writes are introduced.
+
+Environment-key checks compare added and removed literal keys within each file,
+skipping recognised test paths and `.github/workflows/` patches. Dynamic keys,
+multiline calls and semantic changes to existing keys can be missed. API path
+checks require a recognised source extension (JS/TS, Python, Ruby, Go, Rust,
+Java, PHP or C#). These remain heuristics, not parsers.
+
+The [issue #5 dogfooding report](docs/dogfood-issue-5.md) records evidence-backed
+fixes and remaining default-rule noise. Its verdict is **BLOCK**: intentional
+lockless libraries, non-dependency manifest edits and coherent broad changes
+still produce false positives. Release preparation remains gated on #5.
 
 ## Optional false-positive controls
 
