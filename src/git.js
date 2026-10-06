@@ -50,21 +50,7 @@ function loadBaseConfig(baseCommit, cwd = process.cwd()) {
   }
 }
 
-// Match Git's core.quotePath=true spelling byte-for-byte, avoiding ambiguous
-// splitting of headers for paths containing spaces or " b/". Unrepresentable
-// filenames cannot match and are conservatively omitted from patch evidence.
-function quotedGitPath(path) {
-  const escapes = { 7: "a", 8: "b", 9: "t", 10: "n", 11: "v", 12: "f", 13: "r", 34: '"', 92: "\\" };
-  let text = "";
-  let quoted = false;
-  for (const byte of Buffer.from(path, "utf8")) {
-    if (escapes[byte]) { text += "\\" + escapes[byte]; quoted = true; }
-    else if (byte < 32 || byte >= 127) {
-      text += "\\" + byte.toString(8).padStart(3, "0"); quoted = true;
-    } else text += String.fromCharCode(byte);
-  }
-  return quoted ? '"' + text + '"' : text;
-}
+const { quotedGitPath } = require("./paths");
 
 function filterPatches(diff, files) {
   // Configured ignores disable rename detection: each addition/deletion has
@@ -102,7 +88,29 @@ function comparison(baseRef, cwd = process.cwd(), config = {}) {
   const diff = ignored.length ? files.map(file => filterPatches(git([
     ...diffArgs, `:(top,literal)${file}`, `:(top,exclude,literal)${file}/`,
   ], cwd), [file])).join("") : git(diffArgs, cwd);
-  return { files, diff };
+  return { files, diff, packages: loadPackageContents(mergeBase, head, files, cwd) };
 }
 
-module.exports = { comparison, resolveBase, repositoryRoot, loadBaseConfig, filterPatches };
+// Read regular committed package blobs only, never working-tree files or code.
+// A missing, non-regular or oversized blob cannot prove a version-only change.
+function loadPackageContents(base, head, files, cwd = process.cwd()) {
+  const wanted = new Set(files.filter(file => /(^|\/)package\.json$/.test(file)));
+  const packages = new Map();
+  if (!wanted.size) return packages;
+  const read = commit => {
+    const contents = new Map();
+    for (const entry of git(["ls-tree", "-r", "-z", commit], cwd).split("\0")) {
+      const match = /^(100644|100755) blob ([0-9a-f]+)\t([\s\S]+)$/.exec(entry);
+      if (!match || !wanted.has(match[3])) continue;
+      const size = Number(git(["cat-file", "-s", match[2]], cwd).trim());
+      if (size <= 1024 * 1024) contents.set(match[3], git(["cat-file", "blob", match[2]], cwd));
+    }
+    return contents;
+  };
+  const before = read(base);
+  const after = read(head);
+  for (const file of wanted) packages.set(file, { before: before.get(file), after: after.get(file) });
+  return packages;
+}
+
+module.exports = { comparison, resolveBase, repositoryRoot, loadBaseConfig, filterPatches, loadPackageContents };

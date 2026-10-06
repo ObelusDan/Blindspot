@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { evaluate } = require('../src/rules');
 const patch = (path, lines) => `diff --git a/${path} b/${path}\n--- a/${path}\n+++ b/${path}\n@@ -1 +1 @@\n${lines}\n`;
-const ids = (files, diff) => evaluate(files, diff).map(w => w.id);
+const ids = (files, diff, packages) => evaluate(files, diff, {}, packages).map(w => w.id);
 
 test('Click #3776 and #3777: moving existing TERM and LESS reads needs no new env docs', () => {
   for (const [before, after] of [
@@ -26,12 +26,12 @@ test('Express #7464: Actions output plumbing belongs to workflow review, not env
 });
 
 test('got 16.0.0: version-only releases do not change dependency resolution', () => {
-  assert.deepEqual(ids(['package.json'], patch('package.json', '-  "version": "15.1.0",\n+  "version": "16.0.0",')), []);
+  assert.deepEqual(ids(['package.json'], patch('package.json', '-  "version": "15.1.0",\n+  "version": "16.0.0",'), new Map([['package.json', {before: '{"version":"15.1.0"}', after: '{"version":"16.0.0"}'}]])), []);
   assert.deepEqual(ids(['package.json'], patch('package.json', '-  "got": "15.1.0",\n+  "got": "16.0.0",')), ['manifest-without-lock']);
 });
 
 test('pnpm #16637: package metadata under an api directory is not API code', () => {
-  assert.deepEqual(ids(['packages/cache/api/package.json'], patch('packages/cache/api/package.json', '-"version": "1"\n+"version": "2"')), []);
+  assert.deepEqual(ids(['packages/cache/api/package.json'], patch('packages/cache/api/package.json', '-"version": "1"\n+"version": "2"'), new Map([['packages/cache/api/package.json', {before: '{"version":"1"}', after: '{"version":"2"}'}]])), []);
   assert.deepEqual(ids(['packages/cache/api/src/index.ts'], ''), ['api-without-tests']);
 });
 

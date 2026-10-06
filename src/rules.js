@@ -25,8 +25,11 @@ function normalizeDeclaration(line) {
   return normalized.replace(/;$/, "");
 }
 
-function evaluate(files, diff, config = {}) {
+function evaluate(files, diff, config = {}, packages = new Map()) {
   const { matchesPath } = require("./config");
+  const { isTestPath, patchSections } = require("./paths");
+  const { isVersionOnlyPackage } = require("./package-version");
+  const sections = patchSections(diff, files);
   const warnings = [];
 
   // Compare literal keys within each file: moving an existing read is not a
@@ -36,13 +39,8 @@ function evaluate(files, diff, config = {}) {
     .filter(line => line.startsWith(prefix) && !line.startsWith(prefix.repeat(3)))
     .flatMap(line => [...line.matchAll(/(?:process\.env\.|import\.meta\.env\.)([A-Za-z_][A-Za-z0-9_]*)|(?:os\.environ(?:\.get)?\s*[[(]|ENV\[|getenv\()\s*["']([^"']+)["']/g)]
       .map(match => match[1] || match[2])));
-  const envSections = diff.includes("diff --git ")
-    ? diff.split(/^diff --git /m).filter(Boolean) : [diff];
-  const envUsageAdded = envSections.some(section => {
-    const path = /^\+\+\+ b\/(.+)$/m.exec(section)?.[1];
-    if (path && (/^\.github\/workflows\//.test(path) ||
-        /(^|\/)(test|tests|__tests__)(\/|\.|$)/i.test(path) ||
-        /\.(test|spec)\.[cm]?[jt]sx?$/i.test(path) || /(^|\/)test_.*\.py$/i.test(path))) return false;
+  const envUsageAdded = sections.some(({ patch: section, changedPath: path }) => {
+    if (path && (/^\.github\/workflows\//.test(path) || isTestPath(path, config))) return false;
     const lines = section.split("\n");
     const removed = envKeys(lines, "-");
     return [...envKeys(lines, "+")].some(key => !removed.has(key));
@@ -62,12 +60,10 @@ function evaluate(files, diff, config = {}) {
     });
   }
 
-  // A version-only package release cannot invalidate dependency resolution.
-  const versionOnlyPackages = new Set(diff.split(/^diff --git /m).slice(1)
-    .filter(section => {
-      const lines = section.split("\n").filter(line => /^[+-]/.test(line) && !/^[+-]{3}/.test(line));
-      return lines.length > 0 && lines.every(line => /^[+-]\s*"version"\s*:\s*"[^"\n]+"\s*,?\s*$/.test(line));
-    }).map(section => /^\+\+\+ b\/(.+)$/m.exec(section)?.[1]).filter(Boolean));
+  // Suppress only an associated package patch with committed structural proof.
+  const versionOnlyPackages = new Set(sections
+    .filter(({ path }) => path && files.includes(path) && /(^|\/)package\.json$/.test(path) && isVersionOnlyPackage(packages.get(path)))
+    .map(({ path }) => path));
   const manifestChanged = any(files.filter(file => !versionOnlyPackages.has(file)), [
     /(^|\/)package\.json$/,
     /(^|\/)pyproject\.toml$/,
@@ -93,12 +89,7 @@ function evaluate(files, diff, config = {}) {
     /(^|\/)(api|apis|routes?|controllers?|handlers?|endpoints?)(\/|\.|$)/i,
   ]);
 
-  const testsChanged = files.some(file => (config.tests || []).some(pattern => matchesPath(file, pattern))) || any(files, [
-    /(^|\/)(test|tests|__tests__)(\/|\.|$)/i,
-    /\.(test|spec)\.[cm]?[jt]sx?$/i,
-    /test_.*\.py$/i,
-    /_test\.go$/i,
-  ]);
+  const testsChanged = files.some(file => isTestPath(file, config));
 
   if (apiChanged && !testsChanged) {
     warnings.push({
@@ -107,7 +98,7 @@ function evaluate(files, diff, config = {}) {
     });
   }
 
-  const schemaChanged = any(files.filter(file => !/(^|\/)(test|tests|__tests__)(\/|\.|$)/i.test(file)), [
+  const schemaChanged = any(files.filter(file => !isTestPath(file, config)), [
     /(^|\/)(schema|schemas)(\/|\.|$)/i,
     /schema\.(prisma|sql)$/i,
   ]);
@@ -144,18 +135,14 @@ function evaluate(files, diff, config = {}) {
     });
   }
 
-  // Use file-local patch evidence. Quoted/ambiguous paths deliberately do not
-  // match: missing a warning is preferable to attributing another file's diff.
-  const patches = diff.split(/^diff --git /m).slice(1);
+  // Shared path association keeps all file-local evidence consistent.
   const docsChanged = any(files, [
     /(^|\/)(README|docs?)(\/|\.|$)/i,
   ]);
   const newCommands = [];
   const publicTypes = [];
-  for (const patch of patches) {
-    const path = /^\+\+\+ b\/(.+)$/m.exec(patch)?.[1];
-    const oldPath = /^--- a\/(.+)$/m.exec(patch)?.[1];
-    if (![path, oldPath].some((candidate) => candidate && files.includes(candidate))) continue;
+  for (const { patch, path, oldPath } of sections) {
+    if (path === undefined && oldPath === undefined) continue;
     // Only root bin entry points with a shebang, not arbitrary scripts.
     if (path && /^bin\/[^/]+$/.test(path) &&
         /^new file mode 100755$/m.test(patch) &&

@@ -156,8 +156,9 @@ Small repairs preserve all eight IDs, ordering and config controls:
    still fires for publishing changes.
 3. got [16.0.0](https://github.com/sindresorhus/got/commit/64f21e2a4797b8c56493143e416508893983063f)
    and pnpm [#16637](https://github.com/pnpm/pnpm/pull/16637): skip package patches
-   whose every changed content line is a version field. Dependency changes
-   still warn. This repairs only two warnings; it does not solve lock policy.
+   proven from committed JSON contents to change only the top-level version
+   string. Nested/dependency version fields cannot establish that proof.
+   Dependency changes still warn. This repairs only two warnings; it does not solve lock policy.
 4. pnpm #16637: require a source-file extension for API triggers, preventing
    `package.json` in an API directory from being called API code.
 5. Prisma [#30405](https://github.com/prisma/prisma/pull/30405): exclude recognised
@@ -189,9 +190,37 @@ The remaining lock heuristic needs repository lock-policy/dependency evidence or
 removal from defaults; this PR does not introduce a manifest-analysis framework
 or disable a stable rule wholesale without reviewing the loss of useful cases.
 
+## PR #11 correctness review repair
+
+The five P2 findings at `caf1fd6db9669aa9b89acd26f0a39cab238bd5d4` are repaired
+through shared helpers: one pure test-path predicate preserves every existing
+built-in convention and configured test patterns; one Git C-quoted path decoder
+checks decoded marker paths against the changed-file list and matching diff
+headers. Spaces, tabs, quotes, backslashes, UTF-8 and octal escapes are covered;
+ambiguous paths cannot establish a suppression. Env, schema, companion and other
+file-local checks reuse these helpers.
+
+Package-version proof uses regular committed JSON blobs from the actual diff
+merge base and HEAD, read through Git object commands. It locates one top-level
+version string structurally and requires all remaining JSON text to be identical.
+Nested version fields, dependencies named `version`, duplicate top-level version
+keys, missing or invalid evidence cannot suppress a manifest warning. Only blobs <=1 MiB are read;
+absent proof preserves the ordinary warning. No general manifest framework or
+config control was introduced.
+
+Eight new regression tests cover all five findings, structural proof, ambiguous
+paths and real Git/CLI behavior. Each of the five P2 tests fails against the
+reviewed evaluator and passes with the repair. The original six dogfooding
+regressions remain green. Full frozen-ledger replay is unchanged: **135 changes,
+32 warnings, 0 true positives, 20 useful-but-imperfect, 12 false positives, 0
+observed obvious misses, 62.5% useful warnings**. No historical warning, sample
+member or classification changed. Rule counts remain 0 env, 9 manifest, 0 API,
+0 schema, 15 workflow, 8 scope, 0 CLI and 0 public-types. The manifest/scope
+product-level blockers and **BLOCK** verdict remain unchanged.
+
 ## Validation, reproduction and remaining risks
 
-- Baseline `npm test`: 57/57. After repairs: 63/63 on Node 20.20.2 and Node 26.10.0.
+- Baseline `npm test`: 57/57. After review repairs: 71/71 on Node 20.20.2 and Node 26.10.0.
 - `git diff --check`: clean. Current Actions workflow runs `npm test` on Node 20;
   publication-time PR/main check status should be checked separately.
 - [Replay script](../scripts/replay-dogfood.cjs) reproduces the final 135 changes

@@ -37,8 +37,8 @@ function main() {
   const root = repositoryRoot();
   const baseCommit = resolveBase(base, root);
   const config = loadBaseConfig(baseCommit, root);
-  const { files, diff } = comparison(baseCommit, root, config);
-  const warnings = evaluate(files, diff, config);
+  const { files, diff, packages } = comparison(baseCommit, root, config);
+  const warnings = evaluate(files, diff, config, packages);
   render(warnings, files);
   writeSummary(warnings, files);
 

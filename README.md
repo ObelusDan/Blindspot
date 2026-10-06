@@ -46,7 +46,8 @@ interface, type, class, function, const, let or enum declarations in root
 source exports. Any recognised test or README/docs change suppresses it.
 This deliberately misses multiline body-only edits, re-exports, nested package
 entry points and other languages. Both rules require file-local diff evidence;
-quoted/ambiguous paths are skipped. Existing rule IDs and ordering are preserved;
+Git-quoted paths are decoded; ambiguous paths are skipped. Existing rule IDs and
+ordering are preserved;
 new warnings follow the original six rules.
 
 Candidate rules left out after false-positive review:
@@ -79,10 +80,17 @@ still trigger a warning; the tool cannot prove intent. No parsing dependencies,
 network calls or repository writes are introduced.
 
 Environment-key checks compare added and removed literal keys within each file,
-skipping recognised test paths and `.github/workflows/` patches. Dynamic keys,
+skipping recognised test paths and `.github/workflows/` patches. The same pure
+test-path predicate is used for companion detection and env/schema exclusions,
+including configured test patterns. Dynamic keys,
 multiline calls and semantic changes to existing keys can be missed. API path
 checks require a recognised source extension (JS/TS, Python, Ruby, Go, Rust,
-Java, PHP or C#). These remain heuristics, not parsers.
+Java, PHP or C#). These remain heuristics, not parsers. Version-only package
+suppression requires
+regular committed `package.json` blobs at the diff's merge base and HEAD whose
+only changed text is the single top-level version string. Missing, invalid,
+ambiguous or oversized (>1 MiB) package evidence keeps the manifest warning;
+partial diff lines and working-tree contents cannot establish that proof.
 
 The [issue #5 dogfooding report](docs/dogfood-issue-5.md) records evidence-backed
 fixes and remaining default-rule noise. Its verdict is **BLOCK**: intentional
