@@ -90,12 +90,18 @@ function comparison(baseRef, cwd = process.cwd(), config = {}) {
   const names = git(["diff", "--no-ext-diff", "--no-textconv", "--name-only", "-z", ...renameOptions, mergeBase, head, "--"], cwd);
   const { matchesPath } = require("./config");
   const files = names.split("\0").filter(Boolean).filter(file => !ignored.some(pattern => matchesPath(file, pattern)));
-  const rawDiff = ignored.length && !files.length ? "" : git([
+  const diffArgs = [
     ...(ignored.length ? ["-c", "core.quotePath=true"] : []),
     "diff", "--no-ext-diff", "--no-textconv", ...renameOptions, "--no-color",
     "--src-prefix=a/", "--dst-prefix=b/", "--unified=0", mergeBase, head, "--",
-  ], cwd);
-  const diff = ignored.length ? filterPatches(rawDiff, files) : rawDiff;
+  ];
+  // Literal pathspecs still match descendants when a file becomes a directory.
+  // Exclude that subtree before Git generates patches, then retain the exact
+  // header check as a conservative guard. One path per call also avoids argv
+  // limits and prevents exclusions for one file from hiding another retained file.
+  const diff = ignored.length ? files.map(file => filterPatches(git([
+    ...diffArgs, `:(top,literal)${file}`, `:(top,exclude,literal)${file}/`,
+  ], cwd), [file])).join("") : git(diffArgs, cwd);
   return { files, diff };
 }
 

@@ -16,13 +16,19 @@ function parseConfig(source) {
   const config = { disable: [], ignore: [], tests: [], migrations: [] };
   const seen = new Set();
   let key;
+  let keyLine;
+  const requireBody = () => {
+    if (key && !config[key].length) invalid(`key '${key}' needs at least one list item or explicit []`, keyLine);
+  };
   for (const [index, original] of source.replace(/^\uFEFF/, "").split(/\r?\n/).entries()) {
     const line = index + 1;
     if (/^\s*(?:#.*)?$/.test(original)) continue;
     if (original.includes("\t")) invalid("tabs are not supported; indent with spaces", line);
     const header = /^([a-z]+):\s*(\[\])?\s*(?:#.*)?$/.exec(original);
     if (header) {
+      requireBody();
       key = header[1];
+      keyLine = line;
       if (!KEYS.includes(key)) invalid(`unknown key '${key}'`, line);
       if (seen.has(key)) invalid(`duplicate key '${key}'`, line);
       seen.add(key);
@@ -52,6 +58,7 @@ function parseConfig(source) {
     if (config[key].includes(value)) invalid(`duplicate value '${value}' in ${key}; remove the repeated entry`, line);
     config[key].push(value);
   }
+  requireBody();
   return config;
 }
 

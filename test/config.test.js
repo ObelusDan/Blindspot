@@ -271,3 +271,55 @@ test('unassociated or ambiguous patch sections are excluded conservatively', () 
   assert.equal(filterPatches(rejected + kept, ['keep.js']), kept);
   assert.equal(filterPatches(rejected + kept, []), '');
 });
+
+for (const key of ['disable', 'ignore', 'tests', 'migrations']) {
+  test(`${key} requires a list body before another key or EOF`, () => {
+    for (const ending of ['', '\n# comment\n\n', '\ntests: []', '\n# comment\nignore: []']) {
+      assert.throws(() => parseConfig(`# policy\n${key}:${ending}`),
+        error => error.message.includes('line 2') && error.message.includes(`key '${key}' needs at least one list item or explicit []`));
+    }
+    const value = key === 'disable' ? 'workflow-change' : 'spec/**';
+    assert.deepEqual(parseConfig(`${key}: # list\n\n  # comment\n  - ${value}\n`)[key], [value]);
+    assert.deepEqual(parseConfig(`${key}: [] # empty\n\n# comment`), empty);
+    assert.throws(() => parseConfig(`${key}:\n  - ${value}\n${key}: []`), /line 3.*duplicate key/);
+  });
+}
+
+for (const inverse of [false, true]) {
+  test(`large ignored patch is never buffered during ${inverse ? 'directory-to-file' : 'file-to-directory'} transition`, t => {
+    const {cwd, git, cli} = fixture(t);
+    writeFileSync(join(cwd, '.blindspot.yml'), 'ignore:\n  - "pkg/**"\n');
+    // Text patch output exceeds the previous 32 MiB spawn buffer.
+    const large = 'process.env.IGNORED_KEY;\n'.repeat(1500000);
+    if (inverse) {
+      mkdirSync(join(cwd, 'pkg'));
+      writeFileSync(join(cwd, 'pkg/large.js'), large);
+    } else writeFileSync(join(cwd, 'pkg'), 'old retained file\n');
+    git('add', '.'); git('commit', '-q', '-m', 'large base'); git('branch', '-f', 'main', 'HEAD');
+    rmSync(join(cwd, 'pkg'), {recursive: true});
+    if (inverse) writeFileSync(join(cwd, 'pkg'), 'process.env.RETAINED_KEY;\n');
+    else {
+      mkdirSync(join(cwd, 'pkg'));
+      writeFileSync(join(cwd, 'pkg/large.js'), large);
+    }
+    writeFileSync(join(cwd, 'small.js'), 'process.env.SMALL_KEY;\n');
+    git('add', '.'); git('commit', '-q', '-m', 'large feature');
+    const previous = spawnSync('git', ['diff', '--no-renames', '--unified=0', 'main', 'HEAD', '--'], {
+      cwd, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
+    });
+    assert.equal(previous.error?.code, 'ENOBUFS');
+    const before = [git('status', '--porcelain=v1'), git('show-ref'), git('reflog', '--all')];
+    const config = baseConfig(cwd);
+    const result = comparison('main', cwd, config);
+    assert.deepEqual(result.files, ['pkg', 'small.js']);
+    assert.doesNotMatch(result.diff, /IGNORED_KEY|large\.js/);
+    assert.match(result.diff, /\+process\.env\.SMALL_KEY;/);
+    assert.equal(result.diff.includes('+process.env.RETAINED_KEY;'), inverse);
+    assert.equal((result.diff.match(/^diff --git /gm) || []).length, 2);
+    assert.deepEqual(evaluate(result.files, result.diff, config).map(w => w.id), ['env-undocumented']);
+    const checked = cli();
+    assert.equal(checked.status, 0);
+    assert.match(checked.stdout, /Changed files: 2/);
+    assert.deepEqual([git('status', '--porcelain=v1'), git('show-ref'), git('reflog', '--all')], before);
+  });
+}
