@@ -104,7 +104,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -118,7 +118,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -162,7 +162,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -176,7 +176,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -206,7 +206,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -220,7 +220,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -244,7 +244,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -258,7 +258,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -282,7 +282,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -296,7 +296,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -321,7 +321,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -335,7 +335,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -443,7 +443,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -457,7 +457,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -605,7 +605,7 @@
           "classification": "false_positive",
           "evidence": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
           "explanation": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -619,7 +619,7 @@
           "classification": "false_positive",
           "evidence": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
           "explanation": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -643,7 +643,7 @@
           "classification": "false_positive",
           "evidence": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
           "explanation": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -657,7 +657,7 @@
           "classification": "false_positive",
           "evidence": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
           "explanation": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -681,7 +681,7 @@
           "classification": "false_positive",
           "evidence": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
           "explanation": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -695,7 +695,7 @@
           "classification": "false_positive",
           "evidence": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
           "explanation": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -736,7 +736,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -760,7 +760,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -800,7 +800,7 @@
           "classification": "false_positive",
           "evidence": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
           "explanation": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -814,7 +814,7 @@
           "classification": "false_positive",
           "evidence": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
           "explanation": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -841,7 +841,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -855,7 +855,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -879,7 +879,7 @@
           "classification": "false_positive",
           "evidence": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
           "explanation": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -893,7 +893,7 @@
           "classification": "false_positive",
           "evidence": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
           "explanation": "Dependency update in a library whose base .gitignore explicitly ignores package-lock.json, npm-shrinkwrap.json and yarn.lock; no tracked root lock is maintained.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -933,7 +933,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -947,7 +947,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -972,7 +972,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -986,7 +986,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -1205,7 +1205,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -1219,7 +1219,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -1534,7 +1534,7 @@
           "classification": "false_positive",
           "evidence": "Coherent stable-branch integration, mechanical comment wrapping, or vendored npx import. File/area counts do not establish accidental scope creep.",
           "explanation": "Coherent stable-branch integration, mechanical comment wrapping, or vendored npx import. File/area counts do not establish accidental scope creep.",
-          "configuration_solution": "disable: [scope-review]; ignores could hide entire areas but lose companion evidence",
+          "configuration_solution": "disable list containing scope-review; ignores could hide entire areas but lose companion evidence",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -1548,7 +1548,7 @@
           "classification": "false_positive",
           "evidence": "Coherent stable-branch integration, mechanical comment wrapping, or vendored npx import. File/area counts do not establish accidental scope creep.",
           "explanation": "Coherent stable-branch integration, mechanical comment wrapping, or vendored npx import. File/area counts do not establish accidental scope creep.",
-          "configuration_solution": "disable: [scope-review]; ignores could hide entire areas but lose companion evidence",
+          "configuration_solution": "disable list containing scope-review; ignores could hide entire areas but lose companion evidence",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -1732,7 +1732,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -1746,7 +1746,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -1787,7 +1787,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -1801,7 +1801,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -2345,7 +2345,7 @@
           "classification": "false_positive",
           "evidence": "Package version-only release metadata; no dependency resolution changed.",
           "explanation": "Package version-only release metadata; no dependency resolution changed.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": false
         },
@@ -2707,7 +2707,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "28 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
           "explanation": "28 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
-          "configuration_solution": "disable: [scope-review]; ignores could hide entire areas but lose companion evidence",
+          "configuration_solution": "disable list containing scope-review; ignores could hide entire areas but lose companion evidence",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -2721,7 +2721,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "28 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
           "explanation": "28 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
-          "configuration_solution": "disable: [scope-review]; ignores could hide entire areas but lose companion evidence",
+          "configuration_solution": "disable list containing scope-review; ignores could hide entire areas but lose companion evidence",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -2794,7 +2794,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "50 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
           "explanation": "50 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
-          "configuration_solution": "disable: [scope-review]; ignores could hide entire areas but lose companion evidence",
+          "configuration_solution": "disable list containing scope-review; ignores could hide entire areas but lose companion evidence",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -2808,7 +2808,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "50 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
           "explanation": "50 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
-          "configuration_solution": "disable: [scope-review]; ignores could hide entire areas but lose companion evidence",
+          "configuration_solution": "disable list containing scope-review; ignores could hide entire areas but lose companion evidence",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -3230,7 +3230,7 @@
           "classification": "false_positive",
           "evidence": "Only package export-map test entry points changed; no dependency declaration changed.",
           "explanation": "Only package export-map test entry points changed; no dependency declaration changed.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         },
@@ -3240,7 +3240,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "193 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
           "explanation": "193 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
-          "configuration_solution": "disable: [scope-review]; ignores could hide entire areas but lose companion evidence",
+          "configuration_solution": "disable list containing scope-review; ignores could hide entire areas but lose companion evidence",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -3254,7 +3254,7 @@
           "classification": "false_positive",
           "evidence": "Only package export-map test entry points changed; no dependency declaration changed.",
           "explanation": "Only package export-map test entry points changed; no dependency declaration changed.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         },
@@ -3264,7 +3264,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "193 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
           "explanation": "193 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
-          "configuration_solution": "disable: [scope-review]; ignores could hide entire areas but lose companion evidence",
+          "configuration_solution": "disable list containing scope-review; ignores could hide entire areas but lose companion evidence",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -4292,7 +4292,7 @@
           "classification": "false_positive",
           "evidence": "Coherent stable-branch integration, mechanical comment wrapping, or vendored npx import. File/area counts do not establish accidental scope creep.",
           "explanation": "Coherent stable-branch integration, mechanical comment wrapping, or vendored npx import. File/area counts do not establish accidental scope creep.",
-          "configuration_solution": "disable: [scope-review]; ignores could hide entire areas but lose companion evidence",
+          "configuration_solution": "disable list containing scope-review; ignores could hide entire areas but lose companion evidence",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -4304,7 +4304,7 @@
           "classification": "false_positive",
           "evidence": "Coherent stable-branch integration, mechanical comment wrapping, or vendored npx import. File/area counts do not establish accidental scope creep.",
           "explanation": "Coherent stable-branch integration, mechanical comment wrapping, or vendored npx import. File/area counts do not establish accidental scope creep.",
-          "configuration_solution": "disable: [scope-review]; ignores could hide entire areas but lose companion evidence",
+          "configuration_solution": "disable list containing scope-review; ignores could hide entire areas but lose companion evidence",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -4369,7 +4369,7 @@
           "classification": "false_positive",
           "evidence": "Package version-only release metadata; no dependency resolution changed.",
           "explanation": "Package version-only release metadata; no dependency resolution changed.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": false
         }
@@ -4407,7 +4407,7 @@
           "classification": "false_positive",
           "evidence": "Library dependency/packaging update; base root tree has no tracked recognised lockfile and yarn.lock is ignored. Requiring a lock invents a repository policy.",
           "explanation": "Library dependency/packaging update; base root tree has no tracked recognised lockfile and yarn.lock is ignored. Requiring a lock invents a repository policy.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -4419,7 +4419,7 @@
           "classification": "false_positive",
           "evidence": "Library dependency/packaging update; base root tree has no tracked recognised lockfile and yarn.lock is ignored. Requiring a lock invents a repository policy.",
           "explanation": "Library dependency/packaging update; base root tree has no tracked recognised lockfile and yarn.lock is ignored. Requiring a lock invents a repository policy.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -4490,7 +4490,7 @@
           "classification": "false_positive",
           "evidence": "Library dependency/packaging update; base root tree has no tracked recognised lockfile and yarn.lock is ignored. Requiring a lock invents a repository policy.",
           "explanation": "Library dependency/packaging update; base root tree has no tracked recognised lockfile and yarn.lock is ignored. Requiring a lock invents a repository policy.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -4502,7 +4502,7 @@
           "classification": "false_positive",
           "evidence": "Library dependency/packaging update; base root tree has no tracked recognised lockfile and yarn.lock is ignored. Requiring a lock invents a repository policy.",
           "explanation": "Library dependency/packaging update; base root tree has no tracked recognised lockfile and yarn.lock is ignored. Requiring a lock invents a repository policy.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -4531,7 +4531,7 @@
           "classification": "false_positive",
           "evidence": "Library dependency/packaging update; base root tree has no tracked recognised lockfile and yarn.lock is ignored. Requiring a lock invents a repository policy.",
           "explanation": "Library dependency/packaging update; base root tree has no tracked recognised lockfile and yarn.lock is ignored. Requiring a lock invents a repository policy.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -4543,7 +4543,7 @@
           "classification": "false_positive",
           "evidence": "Library dependency/packaging update; base root tree has no tracked recognised lockfile and yarn.lock is ignored. Requiring a lock invents a repository policy.",
           "explanation": "Library dependency/packaging update; base root tree has no tracked recognised lockfile and yarn.lock is ignored. Requiring a lock invents a repository policy.",
-          "configuration_solution": "disable: [manifest-without-lock] reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
+          "configuration_solution": "disable list containing manifest-without-lock reasonably solves intentional lockless libraries; ignores are too broad for metadata-only changes",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -4972,7 +4972,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         },
@@ -4982,7 +4982,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "403 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
           "explanation": "403 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
-          "configuration_solution": "disable: [scope-review]; ignores could hide entire areas but lose companion evidence",
+          "configuration_solution": "disable list containing scope-review; ignores could hide entire areas but lose companion evidence",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -4994,7 +4994,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
           "explanation": "Changed Actions executable dependency, trigger, or command merits a security/execution review. Generic reminder; no omitted security review is proven.",
-          "configuration_solution": "disable: [workflow-change] for teams already reviewing every workflow change",
+          "configuration_solution": "disable list containing workflow-change for teams already reviewing every workflow change",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         },
@@ -5004,7 +5004,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "403 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
           "explanation": "403 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
-          "configuration_solution": "disable: [scope-review]; ignores could hide entire areas but lose companion evidence",
+          "configuration_solution": "disable list containing scope-review; ignores could hide entire areas but lose companion evidence",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -5185,7 +5185,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "145 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
           "explanation": "145 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
-          "configuration_solution": "disable: [scope-review]; ignores could hide entire areas but lose companion evidence",
+          "configuration_solution": "disable list containing scope-review; ignores could hide entire areas but lose companion evidence",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -5197,7 +5197,7 @@
           "classification": "useful_but_imperfect",
           "evidence": "145 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
           "explanation": "145 files span implementation, test/example, and documentation/project areas. Scope review is reasonable, though a coherent change is not evidence of an omission.",
-          "configuration_solution": "disable: [scope-review]; ignores could hide entire areas but lose companion evidence",
+          "configuration_solution": "disable list containing scope-review; ignores could hide entire areas but lose companion evidence",
           "default_heuristic_at_fault": false,
           "retained_after_fixes": true
         }
@@ -6040,7 +6040,7 @@
           "classification": "false_positive",
           "evidence": "Coherent stable-branch integration, mechanical comment wrapping, or vendored npx import. File/area counts do not establish accidental scope creep.",
           "explanation": "Coherent stable-branch integration, mechanical comment wrapping, or vendored npx import. File/area counts do not establish accidental scope creep.",
-          "configuration_solution": "disable: [scope-review]; ignores could hide entire areas but lose companion evidence",
+          "configuration_solution": "disable list containing scope-review; ignores could hide entire areas but lose companion evidence",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
@@ -6052,7 +6052,7 @@
           "classification": "false_positive",
           "evidence": "Coherent stable-branch integration, mechanical comment wrapping, or vendored npx import. File/area counts do not establish accidental scope creep.",
           "explanation": "Coherent stable-branch integration, mechanical comment wrapping, or vendored npx import. File/area counts do not establish accidental scope creep.",
-          "configuration_solution": "disable: [scope-review]; ignores could hide entire areas but lose companion evidence",
+          "configuration_solution": "disable list containing scope-review; ignores could hide entire areas but lose companion evidence",
           "default_heuristic_at_fault": true,
           "retained_after_fixes": true
         }
