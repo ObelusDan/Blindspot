@@ -107,7 +107,7 @@ test('ignore removes both triggers and companion evidence, with literal unusual 
   assert.deepEqual(result.files, ['api/users.js', 'literal[1].js']);
   assert.doesNotMatch(result.diff, /NEW_KEY|generated/);
   assert.deepEqual(evaluate(result.files, result.diff, config).map(w => w.id), ['env-undocumented', 'api-without-tests']);
-  assert.deepEqual(comparison('main', cwd, {ignore: ['**']}), {files: [], diff: ''});
+  assert.deepEqual(comparison('main', cwd, {ignore: ['**']}), {files: [], diff: '', packages: new Map() });
   assert.deepEqual(comparison('main', cwd, empty), comparison('main', cwd));
   writeFileSync(join(cwd, '.blindspot.yml'), 'ignore:\n  - "generated/**"');
   const output = mkdtempSync(join(tmpdir(), 'blindspot-config-summary-'));

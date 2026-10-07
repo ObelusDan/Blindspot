@@ -19,7 +19,7 @@ function fixture(t) {
 
 test('empty diff is clean', t => {
   const { cwd } = fixture(t);
-  assert.deepEqual(comparison('main', cwd), { files: [], diff: '' });
+  assert.deepEqual(comparison('main', cwd), { files: [], diff: '', packages: new Map() });
 });
 
 test('remote base ref, unusual filenames, and repository remain unchanged', t => {
