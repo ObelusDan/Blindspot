@@ -218,6 +218,33 @@ member or classification changed. Rule counts remain 0 env, 9 manifest, 0 API,
 0 schema, 15 workflow, 8 scope, 0 CLI and 0 public-types. The manifest/scope
 product-level blockers and **BLOCK** verdict remain unchanged.
 
+## Final scalability repair
+
+The remaining P2 at `db1299bd7a958dd8fb3541edbb25acba5c331d81`
+was an unbounded recursive `ls-tree` read of both complete repository trees.
+Package evidence now queries one exact changed manifest per commit with
+`--literal-pathspecs ls-tree --full-tree -z`, without recursion. One path per
+call bounds output and argument size; no unrelated subtree is enumerated.
+The exact NUL-terminated regular-blob check, 1 MiB blob limit, deterministic
+changed-path order and committed structural version proof remain intact.
+
+Three new real-Git tests cover small repositories, nested and unusual literal
+paths (including Git magic, wildcards and shell-looking text), subdirectory
+invocation, missing/invalid/oversized/non-regular evidence, dependency changes
+and repository integrity. A compact object fixture contains 524,288 unrelated
+files: the old recursive query exceeds 32 MiB and raises `ENOBUFS`, while the
+repaired comparison succeeds and Git tracing shows only two exact manifest
+lookups. This regression also fails on the reviewed implementation itself.
+
+Final local validation: 74/74 tests on Node 20.20.2 and Node 26.10.0. All 71
+previous tests remain passing, including the five previous P2 regressions.
+The frozen 135-change replay retains 32 warnings (20 useful but imperfect,
+12 false positives, 62.5% useful); sample membership and classifications are
+unchanged. No runtime dependency, network operation, shell execution or
+repository mutation was added. The existing opt-in Actions summary output
+remains the only production file write. Issue #5 remains blocked by the
+manifest/scope product decisions; this repair does not authorize #6 or a release.
+
 ## Validation, reproduction and remaining risks
 
 - Baseline `npm test`: 57/57. After review repairs: 71/71 on Node 20.20.2 and Node 26.10.0.

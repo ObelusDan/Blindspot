@@ -99,9 +99,13 @@ function loadPackageContents(base, head, files, cwd = process.cwd()) {
   if (!wanted.size) return packages;
   const read = commit => {
     const contents = new Map();
-    for (const entry of git(["ls-tree", "-r", "-z", commit], cwd).split("\0")) {
-      const match = /^(100644|100755) blob ([0-9a-f]+)\t([\s\S]+)$/.exec(entry);
-      if (!match || !wanted.has(match[3])) continue;
+    // One literal path per query bounds output and argv independently of the
+    // rest of the repository. Do not recurse: a package replaced by a tree is
+    // not package evidence. --full-tree also works from a subdirectory.
+    for (const file of wanted) {
+      const entry = git(["--literal-pathspecs", "ls-tree", "--full-tree", "-z", commit, "--", file], cwd);
+      const match = /^(100644|100755) blob ([0-9a-f]+)\t([\s\S]+)\0$/.exec(entry);
+      if (!match || match[3] !== file) continue;
       const size = Number(git(["cat-file", "-s", match[2]], cwd).trim());
       if (size <= 1024 * 1024) contents.set(match[3], git(["cat-file", "blob", match[2]], cwd));
     }
